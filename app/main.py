@@ -3,10 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from config import DOWNLOADS_DIR
-from database import SessionLocal
-from models import Review
-from schemas import ReviewResponse
+from core.config import STATIC_DIR
+
+from .database import Base, SessionLocal, engine
+from .models import Review
+from .schemas import ReviewResponse
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title='Review Widget API')
 
@@ -18,7 +21,7 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-app.mount('/static', StaticFiles(directory=DOWNLOADS_DIR), name='static')
+app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
 
 
 def get_db():
@@ -51,6 +54,6 @@ def get_reviews(
     for review in reviews:
         if review.avatar_filename:
             full_url = (str(request.base_url) +
-                        'static/' + review.avatar_filename)
+                        'static/avatars/' + review.avatar_filename)
             review.avatar_filename = full_url
     return reviews

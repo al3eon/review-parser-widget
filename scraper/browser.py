@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium_stealth import stealth
 
-from constants import USER_AGENT
+from scraper.constants import USER_AGENT
 
 
 def init_driver():

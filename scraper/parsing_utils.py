@@ -3,8 +3,8 @@ from datetime import datetime
 
 import requests
 
-from config import DOWNLOADS_DIR, logger
-from constants import CUSTOM_MONTH, USER_AGENT
+from core.config import AVATARS_DIR, logger
+from scraper.constants import CUSTOM_MONTH, USER_AGENT
 
 
 def clean_date(date_str):
@@ -27,7 +27,7 @@ def download_link(url_link):
 
     try:
         filename = f'{uuid.uuid4()}.jpg'
-        file_path = DOWNLOADS_DIR / filename
+        file_path = AVATARS_DIR / filename
         headers = {'User-Agent': USER_AGENT}
         response = requests.get(url_link, headers=headers, timeout=10)
 

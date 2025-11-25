@@ -1,6 +1,3 @@
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 DIV_ALL_REVIEWS = (
     'xpath',
     '//div[@class="business-reviews-card-view__review"]'

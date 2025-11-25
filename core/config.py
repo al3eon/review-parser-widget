@@ -1,13 +1,20 @@
 import logging
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-LOGS_DIR = BASE_DIR / 'logs'
-DOWNLOADS_DIR = BASE_DIR / 'downloads'
-LOGS_DIR.mkdir(exist_ok=True)
-DOWNLOADS_DIR.mkdir(exist_ok=True)
-LOG_FILE = LOGS_DIR / 'parser.log'
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+DATA_DIR = BASE_DIR / 'data'
+LOGS_DIR = DATA_DIR / 'logs'
+DB_PATH = DATA_DIR / 'db' / 'reviews.db'
+
+STATIC_DIR = BASE_DIR / 'app' / 'static'
+AVATARS_DIR = STATIC_DIR / 'avatars'
+
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+AVATARS_DIR.mkdir(parents=True, exist_ok=True)
+(DATA_DIR / 'db').mkdir(parents=True, exist_ok=True)
+
+LOG_FILE = LOGS_DIR / 'scraper.log'
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',

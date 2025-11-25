@@ -1,12 +1,11 @@
 from datetime import datetime
 
 from sqlalchemy import (
-    CheckConstraint, Column, DateTime, Integer,
-    String, Text, UniqueConstraint,
+    CheckConstraint, Column, DateTime, Integer, String, Text, UniqueConstraint,
 )
 from sqlalchemy.orm import declared_attr
 
-from database import Base, engine
+from app.database import Base
 
 
 class Review(Base):
@@ -32,8 +31,3 @@ class Review(Base):
             'text', name='reviews_unique'
         ),
     )
-
-
-if __name__ == "__main__":
-    Base.metadata.create_all(bind=engine)
-    print('База данных создана успешно!')

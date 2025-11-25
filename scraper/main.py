@@ -4,16 +4,15 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-from browser import init_driver
-from config import TARGET_URL, logger
-from constants import (
-    DATE_VAR, DIV_ALL_REVIEWS, LINK, LOW_RATING,
-    NAME, RATING, REVIEW_TEXT, SORT_BY_NEW,
-    SORT_STATUS, SPOILER_TEXT_BUTTON,
+from app.database import Base, SessionLocal, engine
+from app.models import Review
+from core.config import TARGET_URL, logger
+from scraper.browser import init_driver
+from scraper.constants import (
+    DATE_VAR, DIV_ALL_REVIEWS, LINK, LOW_RATING, NAME, RATING, REVIEW_TEXT,
+    SORT_BY_NEW, SORT_STATUS, SPOILER_TEXT_BUTTON,
 )
-from database import SessionLocal
-from models import Review
-from parsing_utils import clean_date, clean_url, download_link
+from scraper.parsing_utils import clean_date, clean_url, download_link
 
 
 def setup_page(driver):
@@ -121,6 +120,7 @@ def process_single_review(driver, review, db):
 
 def run_parser():
     logger.info('Запуск парсера...')
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     driver = init_driver()
     action = ActionChains(driver)
@@ -130,7 +130,7 @@ def run_parser():
         duplicate_review = 0
 
         for i, review in enumerate(reviews_elements):
-            logger.info(f'Начинаем {i+1} итерацию!')
+            logger.info(f'Начинаем {i + 1} итерацию!')
             status = process_single_review(driver, review, db)
 
             if status == 'duplicate':
@@ -141,7 +141,7 @@ def run_parser():
 
             elif status == 'added':
                 duplicate_review = 0
-                logger.info(f'{i+1} успешно добавлен')
+                logger.info(f'{i + 1} успешно добавлен')
 
     except Exception as main_e:
         logger.critical(f"Критическая ошибка всего скрипта: {main_e}")
