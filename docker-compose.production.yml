@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    image: al3eon/yandex-reviews-service:latest
+    container_name: review_app_prod
+    restart: always
+    command: gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    ports:
+      - '8000:8000'
+    environment:
+      - SELENIUM_URL=http://chrome:4444/wd/hub
+    volumes:
+      - ./data:/app/data
+      - ./app/static/avatars:/app/app/static/avatars
+
+    depends_on:
+      - chrome
+
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: review_chrome
+    shm_size: '2gb'

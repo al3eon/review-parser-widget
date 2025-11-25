@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: review_app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - '8000:8000'
+    environment:
+      - SELENIUM_URL=http://chrome:4444/wd/hub
+    volumes:
+      - ./data:/app/data
+      - ./app/static/avatars:/app/app/static/avatars
+
+    depends_on:
+      - chrome
+
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: review_chrome
+    shm_size: '2gb'
