@@ -4,7 +4,8 @@ max-line-length = 79
 paths = 
     ./app
 max-complexity = 10
-exclude = 
+exclude =
+   static
    tests
    venv
    env
