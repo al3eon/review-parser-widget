@@ -14,6 +14,7 @@ class Review(Base):
         return cls.__name__.lower()
 
     id = Column(Integer, primary_key=True, index=True)
+    source = Column(String, default='yandex')
     author_name = Column(String, nullable=False)
     rating = Column(
         Integer,
@@ -23,6 +24,7 @@ class Review(Base):
     date_custom = Column(String, nullable=True)
     text = Column(Text, nullable=True)
     avatar_filename = Column(String, nullable=True)
+    photo_url = Column(String, nullable=True)
     parsed_at = Column(DateTime, default=datetime.utcnow)
 
     __table_args__ = (
