@@ -1,5 +1,10 @@
 import logging
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,6 +31,5 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-TARGET_URL = ('https://yandex.ru/maps/?ll=38.830636%2C48.471223&mode=poi&poi'
-              '%5Bpoint%5D=38.830193%2C48.471345&poi%5Buri%5D=ymapsbm1%3A%2F%2'
-              'Forg%3Foid%3D175874439005&tab=reviews&z=18.8')
+YA_TARGET_URL = (os.getenv('YA_TARGET'))
+VK_TARGET_URL = (os.getenv('VK_TARGET'))

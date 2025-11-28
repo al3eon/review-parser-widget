@@ -1,6 +1,6 @@
 import os
 import uuid
-from abc import ABC, abstractmethod
+from abc import ABC
 
 import requests
 from dotenv import load_dotenv
@@ -94,6 +94,28 @@ class BaseScraper(ABC):
             return found[0].get_attribute(attribute)
         return default
 
-    @abstractmethod
     def run(self):
-        """Главный метод запуска."""
+        self.init_driver()
+        try:
+            self._setup_page()
+            reviews = self._load_all_review()
+            duplicate = 0
+            logger.info('Запуск цикла по отзывам...')
+
+            for i, reviews in enumerate(reviews):
+                logger.info(f'Итерация №{i + 1}')
+                status = self._process_review(reviews)
+
+                if status == 'duplicate':
+                    duplicate += 1
+                    if duplicate == 3:
+                        logger.info('Три дубликата подряд. Стоп.')
+                        break
+                elif status == 'added':
+                    duplicate = 0
+
+        except Exception as e:
+            logger.critical(f'Критическая ошибка {self.source_name}: {e}')
+
+        finally:
+            self.quit_driver()

@@ -1,5 +1,6 @@
 from app.database import Base, SessionLocal, engine
 from core.config import logger
+from scraper.vk import VkScraper
 from scraper.yandex import YandexScraper
 
 
@@ -11,6 +12,7 @@ def run_all_parser():
     try:
         scrapers = [
             YandexScraper(db),
+            VkScraper(db),
         ]
         for scraper in scrapers:
             source = scraper.source_name
