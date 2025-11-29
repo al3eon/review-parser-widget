@@ -9,6 +9,10 @@ from scraper.constants import USER_AGENT, YA_CUSTOM_MONTH
 
 
 def ya_clean_date(date_str):
+    """
+    Преобразует ISO-строку даты Яндекса в объект datetime и
+    читаемую строку.
+    """
     date_obj = datetime.fromisoformat(date_str.replace('Z', ''))
     display_date = (f'{date_obj.day:02d} '
                     f'{YA_CUSTOM_MONTH[date_obj.month]} {date_obj.year}')
@@ -17,17 +21,20 @@ def ya_clean_date(date_str):
 
 
 def vk_clean_date(date):
+    """Форматирует datetime объект в строку формата 'DD month YYYY'."""
     return (f'{date.day:02d} '
             f'{YA_CUSTOM_MONTH[date.month]} {date.year}')
 
 
 def ya_clean_url(bg_image_raw):
+    """Очищает CSS-свойство background-image (url("..."))."""
     clean_url = bg_image_raw.replace('url("', '').replace('")', '')
     final_url = clean_url.replace('islands-68', 'islands-200')
     return final_url
 
 
 def download_link(url_link):
+    """Скачивает изображение по URL, сохраняет в папку AVATARS_DIR"""
     if not url_link:
         return None
 
@@ -49,6 +56,10 @@ def download_link(url_link):
 
 
 def vk_improve_quality(url, target_size=150):
+    """
+    Парсит URL фото ВК и пытается найти ссылку на версию изображения
+    с шириной не меньше target_size (по умолчанию 150px).
+    """
     if not url:
         return None
 

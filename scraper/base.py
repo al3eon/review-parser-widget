@@ -1,27 +1,28 @@
 import os
-import uuid
 from abc import ABC
 
-import requests
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium_stealth import stealth
 
 from app.models import Review
-from core.config import AVATARS_DIR, logger
+from core.config import logger
 from scraper.constants import USER_AGENT
 
 load_dotenv()
 
 
 class BaseScraper(ABC):
+    """Абстрактный базовый класс для всех скраперов."""
     def __init__(self, db_session):
+        """Инициализация скрапера."""
         self.db = db_session
         self.driver = None
         self.source_name = 'unknown'
 
     def init_driver(self):
+        """Настраивает и запускает Selenium WebDriver."""
         options = Options()
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_argument(f'--user-agent={USER_AGENT}')
@@ -46,28 +47,12 @@ class BaseScraper(ABC):
         self.driver.set_window_size(1920, 1080)
 
     def quit_driver(self):
+        """Безопасно завершает работу драйвера и закрывает браузер."""
         if self.driver:
             self.driver.quit()
 
-    def download_image(self, url_link):
-        if url_link:
-            try:
-                filename = f'{uuid.uuid4()}.jpg'
-                file_path = AVATARS_DIR / filename
-                headers = {'User-Agent': USER_AGENT}
-                response = requests.get(url_link, headers=headers, timeout=10)
-
-                if response.status_code == 200:
-                    with open(file_path, 'wb') as f:
-                        f.write(response.content)
-                    return filename
-
-            except Exception as e:
-                logger.error(f'Ошибка скачивания картинки: {e}')
-
-        return None
-
     def save_review(self, data: str):
+        """Сохраняет отзыв в базу данных."""
         try:
             new_review = Review(
                 source=self.source_name,
@@ -88,12 +73,14 @@ class BaseScraper(ABC):
             return 'skip'
 
     def get_attribute_safe(self, element, locator, attribute, default=None):
+        """Безопасно получает значение атрибута элемента."""
         found = element.find_elements(*locator)
         if found:
             return found[0].get_attribute(attribute)
         return default
 
     def run(self):
+        """Основной метод запуска."""
         self.init_driver()
         try:
             self._setup_page()

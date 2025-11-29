@@ -22,6 +22,7 @@ wheels/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
+scraper_vk
 .installed.cfg
 *.egg
 MANIFEST

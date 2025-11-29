@@ -27,6 +27,7 @@ app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
 
 
 def get_db():
+    """Генератор сессии базы данных (Dependency Injection)."""
     db = SessionLocal()
     try:
         yield db
@@ -65,8 +66,10 @@ def get_reviews(
             review.avatar_filename = full_url
     return reviews
 
+
 @app.get('/api/reviews/stats')
 def get_reviews_stats(db: Session = Depends(get_db)):
+    """Возвращает статистику по количеству отзывов."""
     total_count = db.query(Review).count()
     vk_count = db.query(Review).filter(Review.source == 'vk').count()
     yandex_count = db.query(Review).filter(Review.source == 'yandex').count()

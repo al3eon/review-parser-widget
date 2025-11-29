@@ -4,47 +4,47 @@ import time
 from dateparser import parse
 from dotenv import load_dotenv
 from selenium.common import NoSuchElementException
-from selenium.webdriver import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 
 from app.models import Review
 from core.config import VK_TARGET_URL, logger
 from scraper.base import BaseScraper
 from scraper.constants import (
     LOW_RATING, VK_AVATAR_LINK, VK_DATE_PUBLISH, VK_DIV_ALL_REVIEWS,
-    VK_FIELD_NUMBER, VK_FIELD_PASSWORD, VK_LOGIN,
-    VK_LOOK_ALL_REVIEW, VK_MAX_ATTEMPTS, VK_NAME, VK_NUMBER_CONTINUE,
-    VK_PASSWORD_CONTINUE, VK_RATING, VK_TEXT_REVIEW,
+    VK_FIELD_NUMBER, VK_FIELD_PASSWORD, VK_LOGIN, VK_LOOK_ALL_REVIEW,
+    VK_MAX_ATTEMPTS, VK_NAME, VK_NUMBER_CONTINUE, VK_PASSWORD_CONTINUE,
+    VK_RATING, VK_TEXT_REVIEW,
 )
 from scraper.parsing_utils import (
-    download_link, vk_clean_date, vk_improve_quality
+    download_link, vk_clean_date, vk_improve_quality,
 )
 
 load_dotenv()
 
 
 class VkScraper(BaseScraper):
+    """Реализация скрапера для ВКонтакте."""
+
     def __init__(self, db):
         super().__init__(db)
         self.source_name = 'vk'
 
     def _setup_page(self):
+        """Выполняет вход в ВК и переходит на страницу обсуждений."""
         self.driver.get('https://vk.com/')
-        time.sleep(5)
+        time.sleep(3)
+
         self.driver.find_element(*VK_LOGIN).click()
         time.sleep(3)
-        action = ActionChains(self.driver)
         field_log = self.driver.find_element(*VK_FIELD_NUMBER)
-        action.send_keys_to_element(
-            field_log, Keys.BACKSPACE).send_keys_to_element(
-            field_log, Keys.BACKSPACE).pause(2).send_keys(
-            os.getenv('VK_LOGIN')).perform()
-        time.sleep(4)
+        field_log.clear()
+        field_log.send_keys(os.getenv('VK_LOGIN'))
+        time.sleep(2)
         self.driver.find_element(*VK_NUMBER_CONTINUE).click()
         time.sleep(4)
-        self.driver.find_element(*VK_FIELD_PASSWORD).click()
-        action.send_keys_to_element(self.driver.find_element(
-            *VK_FIELD_PASSWORD), os.getenv('VK_PASSWORD')).perform()
+
+        pass_field = self.driver.find_element(*VK_FIELD_PASSWORD)
+        pass_field.click()
+        pass_field.send_keys(os.getenv('VK_PASSWORD'))
         time.sleep(3)
         self.driver.find_element(*VK_PASSWORD_CONTINUE).click()
         time.sleep(10)
@@ -54,6 +54,7 @@ class VkScraper(BaseScraper):
         time.sleep(10)
 
     def _load_all_review(self):
+        """Скроллит страницу вниз до появления маркера конца списка."""
         max_attempts = VK_MAX_ATTEMPTS
         attempts = 0
 
@@ -77,6 +78,7 @@ class VkScraper(BaseScraper):
         return self.driver.find_elements(*VK_DIV_ALL_REVIEWS)
 
     def _process_review(self, review_element):
+        """Извлекает данные из HTML-блока отзыва ВК."""
         try:
             rating_val = len(review_element.find_elements(*VK_RATING))
             if not review_element.find_elements(

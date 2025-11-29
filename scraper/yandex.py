@@ -16,11 +16,16 @@ from scraper.parsing_utils import download_link, ya_clean_date, ya_clean_url
 
 
 class YandexScraper(BaseScraper):
+    """Реализация скрапера для Яндекс.Карт."""
     def __init__(self, db):
         super().__init__(db)
         self.source_name = 'yandex'
 
     def _setup_page(self):
+        """
+        Открывает страницу организации и
+        переключает сортировку на 'По новизне'.
+        """
         logger.info(f'Открываем страницу: {YA_TARGET_URL}')
         self.driver.get(YA_TARGET_URL)
         time.sleep(15)
@@ -39,6 +44,7 @@ class YandexScraper(BaseScraper):
             logger.critical(f"Ошибка сортировки! Дальше идти нет смысла. {e}")
 
     def _load_all_review(self):
+        """Динамически подгружает отзывы, скролля контейнер."""
         try:
             action = ActionChains(self.driver)
             prev_count = 0
@@ -60,6 +66,7 @@ class YandexScraper(BaseScraper):
             logger.critical(f'Ошибка скрола страницы! {e}')
 
     def _process_review(self, review_element):
+        """Парсит карточку отзыва Яндекса."""
         try:
             rating_char = (review_element.find_element(
                 *YA_RATING).get_attribute('aria-label')[7])
