@@ -24,7 +24,6 @@ class Review(Base):
     date_custom = Column(String, nullable=True)
     text = Column(Text, nullable=True)
     avatar_filename = Column(String, nullable=True)
-    photo_url = Column(String, nullable=True)
     parsed_at = Column(DateTime, default=datetime.utcnow)
 
     __table_args__ = (

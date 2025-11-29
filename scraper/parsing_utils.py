@@ -48,12 +48,6 @@ def download_link(url_link):
     return None
 
 
-def vk_upgrade_photo(element):
-    best_quality_string = element.split(',')[-1].strip()
-    final_url = best_quality_string.split(' ')[0]
-    return final_url
-
-
 def vk_improve_quality(url, target_size=150):
     if not url:
         return None

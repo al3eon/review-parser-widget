@@ -77,7 +77,6 @@ class BaseScraper(ABC):
                 date_custom=data['date_custom'],
                 text=data['text'],
                 avatar_filename=data['avatar_filename'],
-                photo_url=data.get('photo_url')  # Может быть None
             )
             self.db.add(new_review)
             self.db.commit()

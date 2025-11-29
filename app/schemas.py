@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -8,6 +10,7 @@ class ReviewResponse(BaseModel):
     text: str
     date_custom: str
     avatar_filename: str
+    source: str
 
     class Config:
         from_attributes = True

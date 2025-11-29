@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -37,14 +39,19 @@ def get_reviews(
         request: Request,
         limit: int = 6,
         offset: int = 0,
+        source: Optional[str] = None,
         db: Session = Depends(get_db)
 ):
     """
     Возвращает список отзывов, отсортированных по дате (сначала новые).
     """
+    query = db.query(Review)
+
+    if source in ['vk', 'yandex']:
+        query = query.filter(Review.source == source)
 
     reviews = (
-        db.query(Review)
+        query
         .order_by(Review.date_original.desc())
         .offset(offset)
         .limit(limit)
@@ -57,3 +64,14 @@ def get_reviews(
                         'static/avatars/' + review.avatar_filename)
             review.avatar_filename = full_url
     return reviews
+
+@app.get('/api/reviews/stats')
+def get_reviews_stats(db: Session = Depends(get_db)):
+    total_count = db.query(Review).count()
+    vk_count = db.query(Review).filter(Review.source == 'vk').count()
+    yandex_count = db.query(Review).filter(Review.source == 'yandex').count()
+    return {
+        'total': total_count,
+        'vk': vk_count,
+        'yandex': yandex_count
+    }

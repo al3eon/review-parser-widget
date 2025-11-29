@@ -12,12 +12,12 @@ from core.config import VK_TARGET_URL, logger
 from scraper.base import BaseScraper
 from scraper.constants import (
     LOW_RATING, VK_AVATAR_LINK, VK_DATE_PUBLISH, VK_DIV_ALL_REVIEWS,
-    VK_FIELD_NUMBER, VK_FIELD_PASSWORD, VK_FIRST_PHOTO, VK_LOGIN,
+    VK_FIELD_NUMBER, VK_FIELD_PASSWORD, VK_LOGIN,
     VK_LOOK_ALL_REVIEW, VK_MAX_ATTEMPTS, VK_NAME, VK_NUMBER_CONTINUE,
     VK_PASSWORD_CONTINUE, VK_RATING, VK_TEXT_REVIEW,
 )
 from scraper.parsing_utils import (
-    download_link, vk_clean_date, vk_improve_quality, vk_upgrade_photo,
+    download_link, vk_clean_date, vk_improve_quality
 )
 
 load_dotenv()
@@ -101,15 +101,6 @@ class VkScraper(BaseScraper):
                 review_element, VK_AVATAR_LINK, 'src')
             avatar_filename = download_link(
                 vk_improve_quality(avatar_src)) or 'default_profile_image.png'
-            photo_srcset = self.get_attribute_safe(
-                review_element, VK_FIRST_PHOTO, 'srcset')
-            first_photo_filename = None
-
-            if photo_srcset:
-                clean_url = vk_upgrade_photo(photo_srcset)
-                logger.info(f'Есть фото в отзыве. '
-                            f'Добавляем первое фото: {clean_url}')
-                first_photo_filename = download_link(clean_url)
 
             text_val = review_element.find_element(*VK_TEXT_REVIEW).text
 
@@ -120,7 +111,6 @@ class VkScraper(BaseScraper):
                 'date_custom': custom_date,
                 'text': text_val,
                 'avatar_filename': avatar_filename,
-                'photo_url': first_photo_filename,
             }
 
             return self.save_review(review_data)

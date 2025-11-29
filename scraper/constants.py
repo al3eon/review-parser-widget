@@ -43,8 +43,6 @@ VK_NAME = ('xpath', './/div[@class="vkitTextClamp__root--nWHhg '
                     'vkuiRootComponent__host"]')
 VK_RATING = ('xpath', './/div[@class="vkitStar__root--4hbS9"]')
 
-VK_FIRST_PHOTO = ('xpath', '(.//img[@class="vkuiImageBase__img '
-                           'vkuiImageBase__imgObjectFitCover"])[2]')
 VK_TEXT_REVIEW = ('xpath', './/span[@class="vkuiFootnote__host '
                            'vkuiFootnote__sizeYCompact '
                            'vkuiTypography__host vkuiTypography__normalize '

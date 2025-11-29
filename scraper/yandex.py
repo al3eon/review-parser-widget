@@ -116,7 +116,6 @@ class YandexScraper(BaseScraper):
                 'date_custom': custom_date,
                 'text': text_val,
                 'avatar_filename': avatar_filename,
-                'photo_url': None
             }
 
             return self.save_review(review_data)
