@@ -56,7 +56,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Copy docker-compose.yml via ssh
+      - name: Copy files via ssh
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -65,17 +65,8 @@ jobs:
           source: | 
             docker-compose.production.yml
             nginx.conf
+            app/static
           target: "reviews"
-
-      - name: Copy static files to root
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "app/static"
-          target: "reviews"
-          strip_components: 1
 
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
@@ -85,6 +76,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd reviews
+            mkdir -p static
+            cp -r app/static/* static/
+            rm -rf app
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
             sudo docker compose -f docker-compose.production.yml up -d
