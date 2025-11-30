@@ -28,14 +28,21 @@ services:
     volumes:
       - ./reviews.db:/app/reviews.db
       - ./static:/app/static
+      - ./logs:/app/logs
     depends_on:
-      - chrome
+      chrome:
+        condition: service_healthy
 
   chrome:
     image: selenium/standalone-chrome:latest
     container_name: review_chrome
     restart: always
     shm_size: '2gb'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4444/wd/hub/status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   nginx:
     image: nginx:alpine
