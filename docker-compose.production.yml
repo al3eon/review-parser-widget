@@ -1,23 +1,52 @@
 version: '3.8'
 
 services:
-  app:
+  backend:
     image: al3eon/yandex-reviews-service:latest
     container_name: review_app_prod
     restart: always
     command: gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
-    ports:
-      - '8000:8000'
-    environment:
-      - SELENIUM_URL=http://chrome:4444/wd/hub
+    env_file:
+      - .env
     volumes:
-      - ./data:/app/data
-      - ./app/static/avatars:/app/app/static/avatars
+      - ./reviews.db:/app/reviews.db
+      - ./static:/app/static
 
+  parser:
+    image: al3eon/yandex-reviews-service:latest
+    container_name: review_parser_prod
+    restart: always
+    command: >
+      sh -c "while true; do 
+               echo 'Starting parser...';
+               python -m scraper.run_parser; 
+               echo 'Done. Sleeping 6 hours...';
+               sleep  72000; 
+             done"
+    env_file:
+      - .env
+    volumes:
+      - ./reviews.db:/app/reviews.db
+      - ./static:/app/static
     depends_on:
       - chrome
 
   chrome:
     image: selenium/standalone-chrome:latest
     container_name: review_chrome
+    restart: always
     shm_size: '2gb'
+
+  nginx:
+    image: nginx:alpine
+    container_name: review_nginx
+    restart: always
+    ports:
+      - "80:80"
+      # - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/usr/share/nginx/html/static
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - backend

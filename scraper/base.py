@@ -26,6 +26,12 @@ class BaseScraper(ABC):
         options = Options()
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_argument(f'--user-agent={USER_AGENT}')
+        proxy_url = os.getenv('PROXY_URL')
+        if proxy_url:
+            clean_proxy = (proxy_url.replace('http://', '')
+                           .replace('https://', ''))
+            options.add_argument(f'--proxy-server={clean_proxy}')
+            logger.info(f'Используется прокси: {clean_proxy}')
         selenium_url = os.getenv('SELENIUM_URL')
 
         if selenium_url:
