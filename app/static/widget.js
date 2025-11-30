@@ -192,11 +192,18 @@ class ReviewWidget extends HTMLElement {
                 .rl-filters {
                     display: flex !important; width: fit-content !important; margin: 0 auto !important;
                 }
-                .rl-grid {
-                    display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; 
-                    scroll-snap-type: x mandatory; scroll-behavior: smooth;
-                    margin-bottom: 0 !important; gap: 16px; padding: 10px 20px 5px 20px; 
-                    scrollbar-width: none; -ms-overflow-style: none; align-items: stretch;
+                .rl-card {
+                    flex: 0 0 85%; width: 85%; /* Чуть меньше экрана */
+                    min-height: 265px; height: 265px; transition: height 0.3s ease;
+                    box-shadow: none !important; /* <--- УБИРАЕТ ТЕНЬ */
+                    border: 1px solid #eee;      /* Легкая рамка вместо тени, чтобы не сливалось */
+                }
+            
+                /* УБИВАЕМ ХОВЕР НА МОБИЛКЕ */
+                .rl-card:hover, .rl-card:active, .rl-card:focus {
+                    box-shadow: none !important;
+                    transform: none !important;
+                    background-color: #fff !important;
                 }
                 .rl-grid::-webkit-scrollbar { display: none; }
 
@@ -258,7 +265,7 @@ class ReviewWidget extends HTMLElement {
                 
                 <div class="rl-controls">
                     <button class="rl-load-more-btn">Еще отзывы</button>
-                    <a href="https://yandex.ru/maps" target="_blank" class="rl-write-btn">Оставить отзыв</a>
+                    <a href="https://yandex.ru/maps/org/viantur/175874439005/reviews/" target="_blank" class="rl-write-btn">Оставить отзыв</a>
                 </div>
             </div>
         `;
