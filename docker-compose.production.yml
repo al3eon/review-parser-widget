@@ -20,7 +20,7 @@ services:
       sh -c "while true; do 
                echo 'Starting parser...';
                python -m scraper.run_parser; 
-               echo 'Done. Sleeping 6 hours...';
+               echo 'Done. Sleeping 20 hours...';
                sleep  72000; 
              done"
     env_file:
