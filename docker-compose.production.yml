@@ -9,8 +9,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./reviews.db:/app/reviews.db
-      - ./static:/app/static
+      - ./reviews.db:/app/data/db/reviews.db
+      - ./static:/app/app/static
 
   parser:
     image: al3eon/yandex-reviews-service:latest
@@ -26,9 +26,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./reviews.db:/app/reviews.db
-      - ./static:/app/static
-      - ./logs:/app/logs
+      - ./reviews.db:/app/data/db/reviews.db
+      - ./static:/app/app/static
+      - ./logs:/app/data/logs
     depends_on:
       chrome:
         condition: service_healthy
