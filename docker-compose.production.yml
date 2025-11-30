@@ -9,7 +9,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./reviews.db:/app/data/db/reviews.db
+      - ./data:/app/data
       - ./static:/app/app/static
 
   parser:
@@ -26,9 +26,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./reviews.db:/app/data/db/reviews.db
+      - ./data:/app/data
       - ./static:/app/app/static
-      - ./logs:/app/data/logs
     depends_on:
       chrome:
         condition: service_healthy
