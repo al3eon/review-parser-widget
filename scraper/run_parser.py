@@ -11,8 +11,8 @@ def run_all_parser():
 
     try:
         scrapers = [
-            YandexScraper(db),
-            VkScraper(db),
+            # YandexScraper(db),
+            # VkScraper(db),
         ]
         for scraper in scrapers:
             source = scraper.source_name

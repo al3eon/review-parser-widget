@@ -3,9 +3,9 @@
     // 1. КОНСТАНТЫ И НАСТРОЙКИ
     // ==========================================
     const CONFIG = {
-        BASE_URL: 'http://127.0.0.1:8000', // Базовый URL для API и статики
+        BASE_URL: 'https://widgets.kulinarka.site',
         LIMIT: 6,
-        WIDGET_ID: 'lev-lab',
+        WIDGET_ID: 'review-widget',
         DOTS_VISIBLE: 7,
         DOT_STEP: 20
     };
