@@ -43,6 +43,7 @@ class ReviewWidget extends HTMLElement {
             :host {
                 display: block;
                 width: 100%;
+                overflow: visible !important;
                 margin: 0;
                 padding: 0;
                 font-family: 'Inter', sans-serif;
@@ -214,6 +215,10 @@ class ReviewWidget extends HTMLElement {
                     background: transparent; box-shadow: none; display: inline-block;
                 }
                 .rl-dots-window { display: block; }
+                .rl-card, .rl-card:hover, .rl-card:active {
+                    box-shadow: none !important;
+                    transform: none !important;
+                }
             }
             </style>
         `;
