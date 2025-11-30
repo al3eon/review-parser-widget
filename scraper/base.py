@@ -26,6 +26,11 @@ class BaseScraper(ABC):
         options = Options()
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_argument(f'--user-agent={USER_AGENT}')
+        options.add_argument('--lang=ru-RU')
+        options.add_experimental_option(
+            'prefs',
+            {'intl.accept_languages': 'ru,ru_RU'}
+        )
         proxy_url = os.getenv('PROXY_URL')
         if proxy_url:
             clean_proxy = (proxy_url.replace('http://', '')
