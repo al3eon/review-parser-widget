@@ -3,7 +3,7 @@ name: Yandex Reviews CI
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   tests:
