@@ -43,7 +43,6 @@ class ReviewWidget extends HTMLElement {
             :host {
                 display: block;
                 width: 100%;
-                overflow: visible !important;
                 margin: 0;
                 padding: 0;
                 font-family: 'Inter', sans-serif;
@@ -60,54 +59,54 @@ class ReviewWidget extends HTMLElement {
             * { box-sizing: border-box; }
 
             .rl-grid {
-                display: grid; grid-template-columns: repeat(2, 1fr); 
+                display: grid; grid-template-columns: repeat(2, 1fr);
                 gap: 60px 20px; margin-bottom: 40px;
             }
-            
+
             .rl-filters-wrapper { display: block; }
-            
+
             .rl-filters {
-                display: inline-flex; 
-                background: #E2F2FF; 
-                padding: 4px; 
-                border-radius: 100px; 
+                display: inline-flex;
+                background: #E2F2FF;
+                padding: 4px;
+                border-radius: 100px;
                 gap: 2px;
             }
-            
+
             .rl-filter-btn {
                 display: flex; align-items: center; gap: 6px;
                 padding: 8px 20px; border-radius: 100px; border: none;
-                background: transparent; color: #555; font-size: 15px; font-weight: 600; 
+                background: transparent; color: #555; font-size: 15px; font-weight: 600;
                 cursor: pointer; transition: all 0.2s ease;
                 font-family: 'Inter', sans-serif; line-height: 1;
             }
-            
+
             .rl-filter-btn:hover { color: #333; }
-            
+
             .rl-filter-btn.active {
                 background: #fff; color: #222;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             }
-            
+
             .rl-stats-text {
-                text-align: left; font-size: 14px; color: #5F7D95; 
+                text-align: left; font-size: 14px; color: #5F7D95;
                 margin-top: 15px; margin-bottom: 15px; font-weight: 500;
             }
-            
-            .rl-btn-icon { 
-                width: 24px; height: 24px; 
+
+            .rl-btn-icon {
+                width: 24px; height: 24px;
                 display: flex; align-items: center; justify-content: center;
-                flex-shrink: 0; 
+                flex-shrink: 0;
             }
-            
+
             .rl-icon-img {
-                width: 100%; height: 100%; 
+                width: 100%; height: 100%;
                 display: block; object-fit: cover; border-radius: 50%;
             }
 
             /* --- КАРТОЧКА --- */
             .rl-card {
-                background: #fff; border-radius: 16px; padding: 16px; 
+                background: #fff; border-radius: 16px; padding: 16px;
                 box-shadow: 0 8px 24px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
                 display: flex; flex-direction: column; height: 100%; transition: transform 0.2s ease;
             }
@@ -117,32 +116,32 @@ class ReviewWidget extends HTMLElement {
             .rl-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; margin-right: 16px; background-color: #eee; }
             .rl-name { font-weight: 700; font-size: 16px; color: #222; margin-bottom: 4px; }
             .rl-date { font-size: 13px; color: #888; }
-            .rl-stars { 
-                color: #FFC107; font-size: 20px; margin-bottom: 8px; 
-                letter-spacing: 2px; line-height: 1; 
-            } 
+            .rl-stars {
+                color: #FFC107; font-size: 20px; margin-bottom: 8px;
+                letter-spacing: 2px; line-height: 1;
+            }
 
             .rl-text-container { position: relative; margin-bottom: 6px; }
             .rl-text {
                 font-size: 15px; line-height: 1.6; color: #444; white-space: pre-line;
-                display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; margin: 0; 
+                display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; margin: 0;
             }
             .rl-text.expanded { -webkit-line-clamp: unset; overflow: visible; padding-bottom: 0; }
-             
+
             .rl-read-more-inline {
                 position: absolute; bottom: 0; right: 0; background: #fff; padding-left: 6px;
-                box-shadow: -15px 0 15px 10px #fff; 
-                font-weight: 600; font-size: 15px; color: #333; cursor: pointer; line-height: 1.6; display: inline; 
+                box-shadow: -15px 0 15px 10px #fff;
+                font-weight: 600; font-size: 15px; color: #333; cursor: pointer; line-height: 1.6; display: inline;
                 transition: color 0.2s;
             }
             .rl-read-more-inline:not(.expanded-btn):hover { color: #000; }
-        
+
             .rl-read-more-inline.expanded-btn {
-                position: static; display: block; padding-left: 0; 
-                background: transparent; margin-top: 6px; text-align: left; 
+                position: static; display: block; padding-left: 0;
+                background: transparent; margin-top: 6px; text-align: left;
                 box-shadow: none !important; color: #555;
             }
-        
+
             .rl-hidden { display: none !important; }
             .rl-source { font-size: 12px; color: #aaa; text-decoration: none; border-bottom: 1px dashed #ddd; align-self: flex-start; margin-top: auto; }
 
@@ -164,7 +163,7 @@ class ReviewWidget extends HTMLElement {
 
             /* --- ДОТЫ --- */
             .rl-dots-window {
-                display: none; 
+                display: none;
                 width: 144px; height: 12px; overflow: hidden; margin: 16px auto 8px auto; position: relative;
                 -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
                 mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
@@ -181,7 +180,7 @@ class ReviewWidget extends HTMLElement {
 
             /* АДАПТИВНОСТЬ */
             @media (min-width: 900px) {
-                .rl-grid { grid-template-columns: repeat(3, 1fr); }
+                .rl-grid { grid-template-columns: repeat(3, 1fr); box-shadow: none }
             }
 
             @media (max-width: 599px) {
@@ -192,15 +191,26 @@ class ReviewWidget extends HTMLElement {
                 .rl-filters {
                     display: flex !important; width: fit-content !important; margin: 0 auto !important;
                 }
+                .rl-grid {
+                    display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch;
+                    scroll-snap-type: x mandatory; scroll-behavior: smooth;
+                    margin-bottom: 0 !important; gap: 16px; padding: 10px 20px 5px 20px;
+                    scrollbar-width: none; -ms-overflow-style: none; align-items: stretch;
+                }
                 .rl-grid::-webkit-scrollbar { display: none; }
-                
+
+                .rl-card {
+                    flex: 0 0 100%; width: 100%; scroll-snap-align: center; scroll-snap-stop: always;
+                    min-height: 265px; height: 265px; transition: height 0.3s ease;
+                    box-shadow: none;
+                }
                 .rl-stats-text { text-align: center; margin: 15px 0px 5px 0px; padding-left: 15px; }
                 .rl-card.card-expanded { height: auto !important; }
                 .rl-controls { margin-top: 0 !important; padding: 0 20px; flex-direction: column; gap: 10px; }
                 .rl-load-more-btn { display: none !important; }
                 .rl-write-btn { width: 100%; min-width: 0; }
                 .rl-read-more-inline.expanded-btn {
-                    margin-top: 2px; margin-bottom: -5px; font-size: 14px; padding: 0; 
+                    margin-top: 2px; margin-bottom: -5px; font-size: 14px; padding: 0;
                     background: transparent; box-shadow: none; display: inline-block;
                 }
                 .rl-dots-window { display: block; }
@@ -221,13 +231,13 @@ class ReviewWidget extends HTMLElement {
                 <div class="rl-filters-wrapper">
                     <div class="rl-filters">
                         <button class="rl-filter-btn active" data-source="">Все отзывы</button>
-                        
+
                         <button class="rl-filter-btn" data-source="vk">
                             <span class="rl-btn-icon">${icons.vk}</span>
                             <span class="rl-btn-text">ВКонтакте</span>
                             <span style="color: #888; margin-left: 4px; font-weight: 400;">5.0</span>
                         </button>
-                        
+
                         <button class="rl-filter-btn" data-source="yandex">
                             <span class="rl-btn-icon">${icons.yandex}</span>
                             <span class="rl-btn-text">Яндекс</span>
@@ -235,15 +245,15 @@ class ReviewWidget extends HTMLElement {
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="rl-stats-text">Загрузка...</div>
                 <div class="rl-grid"></div>
-                
-                <div class="rl-dots-window"><div class="rl-dots-track"></div></div> 
-                
+
+                <div class="rl-dots-window"><div class="rl-dots-track"></div></div>
+
                 <div class="rl-controls">
                     <button class="rl-load-more-btn">Еще отзывы</button>
-                    <a href="https://yandex.ru/maps/org/viantur/175874439005/reviews/" target="_blank" class="rl-write-btn">Оставить отзыв</a>
+                     <a href="https://yandex.ru/maps/org/viantur/175874439005/reviews/" target="_blank" class="rl-write-btn">Оставить отзыв</a>
                 </div>
             </div>
         `;
@@ -422,12 +432,12 @@ class ReviewWidget extends HTMLElement {
                     </div>
                 </div>
                 <div class="rl-stars">${this.renderStars(review.rating)}</div>
-                
+
                 <div class="rl-text-container">
                     <div class="rl-text" id="text-${uniqueId}">${safeText}</div>
                     <span class="rl-read-more-inline rl-hidden" data-target="text-${uniqueId}">Ещё</span>
                 </div>
-                
+
                 <a href="${sourceLink}" target="_blank" class="rl-source" style="color: ${sourceColor}">
                    ${sourceText}
                 </a>
