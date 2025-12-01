@@ -206,12 +206,7 @@ class ReviewWidget extends HTMLElement {
                     background-color: #fff !important;
                 }
                 .rl-grid::-webkit-scrollbar { display: none; }
-
-                .rl-card {
-                    flex: 0 0 100%; width: 100%; scroll-snap-align: center; scroll-snap-stop: always;
-                    min-height: 265px; height: 265px; transition: height 0.3s ease;
-                    box-shadow: none;
-                }
+                
                 .rl-stats-text { text-align: center; margin: 15px 0px 5px 0px; padding-left: 15px; }
                 .rl-card.card-expanded { height: auto !important; }
                 .rl-controls { margin-top: 0 !important; padding: 0 20px; flex-direction: column; gap: 10px; }
@@ -222,10 +217,6 @@ class ReviewWidget extends HTMLElement {
                     background: transparent; box-shadow: none; display: inline-block;
                 }
                 .rl-dots-window { display: block; }
-                .rl-card, .rl-card:hover, .rl-card:active {
-                    box-shadow: none !important;
-                    transform: none !important;
-                }
             }
             </style>
         `;
