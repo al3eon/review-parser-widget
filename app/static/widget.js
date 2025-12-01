@@ -192,19 +192,6 @@ class ReviewWidget extends HTMLElement {
                 .rl-filters {
                     display: flex !important; width: fit-content !important; margin: 0 auto !important;
                 }
-                .rl-card {
-                    flex: 0 0 85%; width: 85%; /* Чуть меньше экрана */
-                    min-height: 265px; height: 265px; transition: height 0.3s ease;
-                    box-shadow: none !important; /* <--- УБИРАЕТ ТЕНЬ */
-                    border: 1px solid #eee;      /* Легкая рамка вместо тени, чтобы не сливалось */
-                }
-            
-                /* УБИВАЕМ ХОВЕР НА МОБИЛКЕ */
-                .rl-card:hover, .rl-card:active, .rl-card:focus {
-                    box-shadow: none !important;
-                    transform: none !important;
-                    background-color: #fff !important;
-                }
                 .rl-grid::-webkit-scrollbar { display: none; }
                 
                 .rl-stats-text { text-align: center; margin: 15px 0px 5px 0px; padding-left: 15px; }
