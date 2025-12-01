@@ -5,18 +5,44 @@ services:
     build: .
     container_name: review_app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    ports:
-      - '8000:8000'
-    environment:
-      - SELENIUM_URL=http://chrome:4444/wd/hub
+    env_file:
+      - .env
     volumes:
       - ./data:/app/data
-      - ./app/static/avatars:/app/app/static/avatars
-
+      - ./static:/app/app/static
     depends_on:
-      - chrome
+      chrome:
+        condition: service_healthy
+
+  parser:
+    build: .
+    container_name: review_parser
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./static:/app/app/static
+    depends_on:
+      chrome:
+        condition: service_healthy
 
   chrome:
     image: selenium/standalone-chrome:latest
     container_name: review_chrome
     shm_size: '2gb'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4444/wd/hub/status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:alpine
+    container_name: review_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/usr/share/nginx/html/static
+    depends_on:
+      - app
