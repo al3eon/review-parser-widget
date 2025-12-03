@@ -4,7 +4,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 from app.database import Base, SessionLocal, engine
 from core.utils import log_and_alert_sync, logger
-from scraper.constants import MIN_MINUTE, MAX_MINUTE
+from scraper.constants import MAX_MINUTE, MIN_MINUTE
 from scraper.vk import VkScraper
 from scraper.yandex import YandexScraper
 
@@ -37,12 +37,15 @@ def run_all_parser():
         db.close()
         logger.info('---- Конец общего цикла парсинга ----')
 
+
 def get_random_minute():
     """Возвращает случайную минуту от 5 до 55 для планировщика."""
     return randint(MIN_MINUTE, MAX_MINUTE)
 
 
 if __name__ == '__main__':
+    # Раскоментируйте, если нужно запустить сразу после деплоя на сервер
+    # run_all_parser()
     scheduler = BlockingScheduler()
     random_minute = get_random_minute()
     scheduler.add_job(run_all_parser, 'cron', hour=3, minute=random_minute)

@@ -1,4 +1,4 @@
-import asyncio
+import os
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -6,11 +6,12 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.config import ALLOWED_ORIGINS, STATIC_DIR
 from core.scheduler import scheduler, start_scheduler
-from core.utils import logger, send_telegram_message
+from core.utils import log_and_alert_async
 
 from .database import Base, SessionLocal, engine
 from .models import Review
@@ -29,7 +30,7 @@ app = FastAPI(title='Review Widget API')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS if ALLOWED_ORIGINS != ["*"] else ["*"],
+    allow_origins=ALLOWED_ORIGINS if ALLOWED_ORIGINS != ['*'] else ['*'],
     allow_credentials=True,
     allow_methods=['GET', 'OPTIONS'],
     allow_headers=['*'],
@@ -41,9 +42,7 @@ async def catch_exceptions_middleware(request: Request, call_next):
     try:
         return await call_next(request)
     except Exception as exc:
-        logger.error(f'Критическая ошибка: {exc}', exc_info=True)
-        msg = f'Критическая ошибка!\n Путь: {request.url.path}\n Ошибка: {exc}'
-        asyncio.create_task(send_telegram_message(msg))
+        await log_and_alert_async(exc, f'Путь: {request.url.path}')
         return JSONResponse(
             status_code=500,
             content={'detail': 'Internal Server Error'}
@@ -69,9 +68,7 @@ def get_reviews(
         source: Optional[str] = None,
         db: Session = Depends(get_db)
 ):
-    """
-    Возвращает список отзывов, отсортированных по дате (сначала новые).
-    """
+    """Возвращает список отзывов, отсортированных по дате (сначала новые)."""
     query = db.query(Review)
 
     if source in ['vk', 'yandex']:
@@ -96,11 +93,22 @@ def get_reviews(
 @app.get('/api/reviews/stats')
 def get_reviews_stats(db: Session = Depends(get_db)):
     """Возвращает статистику по количеству отзывов."""
-    total_count = db.query(Review).count()
-    vk_count = db.query(Review).filter(Review.source == 'vk').count()
-    yandex_count = db.query(Review).filter(Review.source == 'yandex').count()
+    stats = db.query(
+        Review.source,
+        func.count().label('count')
+    ).group_by(Review.source).all()
+
+    total = sum(row.count for row in stats)
+    result = {'total': total}
+    for row in stats:
+        result[row.source] = row.count
+    return result
+
+
+@app.get('/api/widget-sources')
+def get_widget_sources():
+    """Только URL источников для виджета."""
     return {
-        'total': total_count,
-        'vk': vk_count,
-        'yandex': yandex_count
+        'vk': os.getenv('YA_TARGET'),
+        'yandex': os.getenv('YANDEX_WIDGET_URL')
     }
