@@ -18,6 +18,8 @@ YA_REVIEW_TEXT = ('xpath', './/span[@class=" spoiler-view__text-container"]')
 YA_CUSTOM_MONTH = {1: 'янв.', 2: 'фев.', 3: 'мар.', 4: 'апр.',
                    5: 'мая', 6: 'июн.', 7: 'июл.', 8: 'авг.',
                    9: 'сен.', 10: 'окт.', 11: 'ноя.', 12: 'дек.'}
+YA_LAST_ELEMENTS = 10
+YA_ELEMENT_RATING_NUMBER = 7
 # ВК
 
 VK_LOGIN = ('xpath', '//span[text()="Войти другим способом"]')
@@ -52,8 +54,11 @@ VK_DATE_PUBLISH = ('xpath', './/span[@class="vkitgetColorClass__'
                             'vkuiFootnote__host vkuiFootnote__sizeYCompact '
                             'vkuiTypography__host vkuiTypography__normalize '
                             'vkuiTypography__inline vkuiRootComponent__host"]')
+VK_LAST_ELEMENTS = 15
 # Общие
 
 LOW_RATING = ['1', '2', '3']
 USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
               '(KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36')
+MIN_MINUTE = 5
+MAX_MINUTE = 55

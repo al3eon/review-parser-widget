@@ -1,6 +1,6 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from core.logger import logger
+from core.utils import logger
 from scripts.backup_db import backup_process
 
 scheduler = AsyncIOScheduler()

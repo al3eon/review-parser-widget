@@ -9,8 +9,8 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from core.config import ALLOWED_ORIGINS, STATIC_DIR
-from core.logger import logger, send_telegram_message
 from core.scheduler import scheduler, start_scheduler
+from core.utils import logger, send_telegram_message
 
 from .database import Base, SessionLocal, engine
 from .models import Review

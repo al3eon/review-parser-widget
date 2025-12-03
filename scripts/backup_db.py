@@ -5,7 +5,7 @@ import sqlite3
 import zipfile
 
 from core.config import BACKUP_DIR, DB_PATH, TG_CHAT_ID
-from core.logger import bot, logger, send_telegram_file, send_telegram_message
+from core.utils import bot, logger, send_telegram_file, send_telegram_message
 
 os.makedirs(BACKUP_DIR, exist_ok=True)
 

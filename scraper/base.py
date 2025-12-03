@@ -1,5 +1,5 @@
 import os
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium_stealth import stealth
 
 from app.models import Review
-from core.logger import logger
+from core.utils import logger
 from scraper.constants import USER_AGENT
 
 load_dotenv()
@@ -61,6 +61,10 @@ class BaseScraper(ABC):
         """Безопасно завершает работу драйвера и закрывает браузер."""
         if self.driver:
             self.driver.quit()
+
+    @abstractmethod
+    def check_review_exists(self, author_name=None, date_original=None):
+        """Абстрактный метод проверки дубликатов."""
 
     def save_review(self, data: str):
         """Сохраняет отзыв в базу данных."""

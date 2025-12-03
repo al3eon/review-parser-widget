@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from aiogram import Bot
@@ -46,3 +47,31 @@ async def send_telegram_file(file_path: str, caption: str = None):
                                 document=doc, caption=caption)
     except Exception as e:
         logger.error(f'Ошибка при отправке файла: {e}')
+
+
+def log_and_alert_sync(error, context=''):
+    """Синхронная функция для логирования и отправки оповещений."""
+    text = (f'Ошибка в {context}:\n{error}' if context else
+            f'Ошибка:\n{error}')
+
+    if isinstance(error, Exception):
+        logger.error(f"{context}: {error}", exc_info=True)
+    else:
+        logger.error(f"{context}: {error}")
+
+    if bot and TG_CHAT_ID:
+        asyncio.create_task(send_telegram_message(text))
+
+
+async def log_and_alert_async(error, context=''):
+    """Асинхронная функция для логирования и отправки оповещений."""
+    text = (f'Ошибка в {context}:\n{error}' if context else
+            f'Ошибка:\n{error}')
+
+    if isinstance(error, Exception):
+        logger.error(f"{context}: {error}", exc_info=True)
+    else:
+        logger.error(f"{context}: {error}")
+
+    if bot and TG_CHAT_ID:
+        asyncio.create_task(send_telegram_message(text))
