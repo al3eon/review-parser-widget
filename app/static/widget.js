@@ -9,7 +9,22 @@ class ReviewWidget extends HTMLElement {
             BASE_URL: 'https://widgets.kulinarka.site',
             LIMIT: 6,
             DOTS_VISIBLE: 7,
-            DOT_STEP: 20
+            DOT_STEP: 20,
+
+            SOURCES: {
+                vk: {
+                    url: '',
+                    color: '#0077FF',
+                    iconPath: '/static/icons/vk.svg',
+                    displayName: 'ВКонтакте'
+                },
+                yandex: {
+                    url: '',
+                    color: '#FC3F1D',
+                    iconPath: '/static/icons/yandex.svg',
+                    displayName: 'Яндекс'
+                }
+            }
         };
 
         this.state = {
@@ -21,12 +36,25 @@ class ReviewWidget extends HTMLElement {
         };
     }
 
-    // Жизненный цикл: когда элемент добавлен в DOM
-    connectedCallback() {
-        this.render();
-        this.initLogic();
+    async loadWidgetSources() {
+        try {
+            const response = await fetch('/api/widget-sources');
+            const urls = await response.json();
+            this.CONFIG.SOURCES.vk.url = urls.vk;
+            this.CONFIG.SOURCES.yandex.url = urls.yandex;
+        } catch (e) {
+            // Без логов, просто используем пустые URL'ы
+        }
     }
 
+    // Жизненный цикл: когда элемент добавлен в DOM
+    connectedCallback() {
+        // Загружаем источники ДО рендера
+        this.loadWidgetSources().then(() => {
+            this.render();
+            this.initLogic();
+        });
+    }
     // Жизненный цикл: когда элемент удален (чистим память)
     disconnectedCallback() {
         if (this.state.observer) this.state.observer.disconnect();
@@ -220,10 +248,12 @@ class ReviewWidget extends HTMLElement {
     }
 
     render() {
-        const icons = {
-            vk: `<img src="${this.CONFIG.BASE_URL}/static/icons/vk.svg" class="rl-icon-img" alt="VK">`,
-            yandex: `<img src="${this.CONFIG.BASE_URL}/static/icons/yandex.svg" class="rl-icon-img" alt="Yandex">`
-        };
+        const icons = {};
+        for (const key in this.CONFIG.SOURCES) {
+            icons[key] = `<img src="${this.CONFIG.BASE_URL}${this.CONFIG.SOURCES[key].iconPath}" 
+                               class="rl-icon-img" 
+                               alt="${this.CONFIG.SOURCES[key].displayName}">`;
+        }
 
         this.shadowRoot.innerHTML = `
             ${this.getStyles()}
@@ -234,13 +264,13 @@ class ReviewWidget extends HTMLElement {
 
                         <button class="rl-filter-btn" data-source="vk">
                             <span class="rl-btn-icon">${icons.vk}</span>
-                            <span class="rl-btn-text">ВКонтакте</span>
+                            <span class="rl-btn-text">${this.CONFIG.SOURCES.vk.displayName}</span>
                             <span style="color: #888; margin-left: 4px; font-weight: 400;">5.0</span>
                         </button>
 
                         <button class="rl-filter-btn" data-source="yandex">
                             <span class="rl-btn-icon">${icons.yandex}</span>
-                            <span class="rl-btn-text">Яндекс</span>
+                            <span class="rl-btn-text">${this.CONFIG.SOURCES.yandex.displayName}</span>
                             <span style="color: #888; margin-left: 4px; font-weight: 400;">5.0</span>
                         </button>
                     </div>
@@ -253,7 +283,7 @@ class ReviewWidget extends HTMLElement {
 
                 <div class="rl-controls">
                     <button class="rl-load-more-btn">Еще отзывы</button>
-                     <a href="https://yandex.ru/maps/org/viantur/175874439005/reviews/" target="_blank" class="rl-write-btn">Оставить отзыв</a>
+                     <a href="${this.CONFIG.SOURCES.yandex.url}" target="_blank" class="rl-write-btn">Оставить отзыв</a>
                 </div>
             </div>
         `;
@@ -417,10 +447,11 @@ class ReviewWidget extends HTMLElement {
         const safeDate = this.escapeHtml(review.date_custom);
         const uniqueId = Math.random().toString(36).substr(2, 9);
 
-        const isVk = review.source === 'vk';
-        const sourceText = isVk ? 'Отзыв из ВКонтакте' : 'Отзыв из Яндекс.Карт';
-        const sourceLink = isVk ? 'https://vk.com/reviews-120145172' : 'https://yandex.ru/maps/org/viantur/175874439005/reviews/';
-        const sourceColor = isVk ? '#0077FF' : '#FC3F1D';
+        const sourceConfig = this.CONFIG.SOURCES[review.source] || {};
+        const sourceText = sourceConfig.displayName ?
+            `Отзыв из ${sourceConfig.displayName}` : 'Отзыв';
+        const sourceLink = sourceConfig.url || '#';
+        const sourceColor = sourceConfig.color || '#000';
 
         return `
             <div class="rl-card">
@@ -438,9 +469,9 @@ class ReviewWidget extends HTMLElement {
                     <span class="rl-read-more-inline rl-hidden" data-target="text-${uniqueId}">Ещё</span>
                 </div>
 
-                <a href="${sourceLink}" target="_blank" class="rl-source" style="color: ${sourceColor}">
-                   ${sourceText}
-                </a>
+                 <a href="${sourceLink}" target="_blank" class="rl-source" style="color: ${sourceColor}">
+                    ${sourceText}
+                 </a>
             </div>
         `;
     }
