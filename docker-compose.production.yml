@@ -16,13 +16,7 @@ services:
     image: al3eon/yandex-reviews-service:latest
     container_name: review_parser_prod
     restart: always
-    command: >
-      sh -c "while true; do 
-               echo 'Starting parser...';
-               python -m scraper.run_parser; 
-               echo 'Done. Sleeping 20 hours...';
-               sleep  72000; 
-             done"
+    command: python -m scraper.run_parser
     env_file:
       - .env
     volumes:

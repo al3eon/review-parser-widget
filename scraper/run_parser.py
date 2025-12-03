@@ -1,3 +1,5 @@
+from apscheduler.schedulers.blocking import BlockingScheduler
+
 from app.database import Base, SessionLocal, engine
 from core.logger import logger
 # from scraper.vk import VkScraper
@@ -5,6 +7,7 @@ from core.logger import logger
 
 
 def run_all_parser():
+    """Функция одного прогона всех парсеров"""
     logger.info('---- Начало общего цикла парсинга ---')
     Base.metadata.create_all(engine)
     db = SessionLocal()
@@ -33,4 +36,10 @@ def run_all_parser():
 
 
 if __name__ == '__main__':
-    run_all_parser()
+    scheduler = BlockingScheduler()
+    scheduler.add_job(run_all_parser, 'cron', hour=3, minute=5)
+    logger.info('Планировщик парсера запущен. Жду 03:05...')
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        logger.info('Планировщик остановлен.')
