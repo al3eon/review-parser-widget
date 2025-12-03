@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 from selenium.common import NoSuchElementException
 
 from app.models import Review
-from core.config import VK_TARGET_URL, logger
+from core.config import VK_TARGET_URL
+from core.logger import logger
 from scraper.base import BaseScraper
 from scraper.constants import (
     LOW_RATING, VK_AVATAR_LINK, VK_DATE_PUBLISH, VK_DIV_ALL_REVIEWS,

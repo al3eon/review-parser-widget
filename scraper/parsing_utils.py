@@ -4,7 +4,8 @@ from datetime import datetime
 
 import requests
 
-from core.config import AVATARS_DIR, logger
+from core.config import AVATARS_DIR
+from core.logger import logger
 from scraper.constants import USER_AGENT, YA_CUSTOM_MONTH
 
 

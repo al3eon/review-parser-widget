@@ -5,7 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from app.models import Review
-from core.config import YA_TARGET_URL, logger
+from core.config import YA_TARGET_URL
+from core.logger import logger
 from scraper.base import BaseScraper
 from scraper.constants import (
     LOW_RATING, YA_AVATAR_LINK, YA_DATE_PUBLISH, YA_DIV_ALL_REVIEWS, YA_NAME,

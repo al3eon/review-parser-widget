@@ -1,5 +1,5 @@
 from app.database import Base, SessionLocal, engine
-from core.config import logger
+from core.logger import logger
 # from scraper.vk import VkScraper
 # from scraper.yandex import YandexScraper
 

@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium_stealth import stealth
 
 from app.models import Review
-from core.config import logger
+from core.logger import logger
 from scraper.constants import USER_AGENT
 
 load_dotenv()
