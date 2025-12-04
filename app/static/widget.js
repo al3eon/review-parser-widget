@@ -13,13 +13,13 @@ class ReviewWidget extends HTMLElement {
 
             SOURCES: {
                 vk: {
-                    url: '',
+                    url: 'https://vk.com/reviews-120145172',
                     color: '#0077FF',
                     iconPath: '/static/icons/vk.svg',
                     displayName: 'ВКонтакте'
                 },
                 yandex: {
-                    url: '',
+                    url: 'https://yandex.ru/maps/org/viantur/175874439005/reviews/',
                     color: '#FC3F1D',
                     iconPath: '/static/icons/yandex.svg',
                     displayName: 'Яндекс'
@@ -36,25 +36,12 @@ class ReviewWidget extends HTMLElement {
         };
     }
 
-    async loadWidgetSources() {
-        try {
-            const response = await fetch('/api/widget-sources');
-            const urls = await response.json();
-            this.CONFIG.SOURCES.vk.url = urls.vk;
-            this.CONFIG.SOURCES.yandex.url = urls.yandex;
-        } catch (e) {
-            // Без логов, просто используем пустые URL'ы
-        }
-    }
-
     // Жизненный цикл: когда элемент добавлен в DOM
     connectedCallback() {
-        // Загружаем источники ДО рендера
-        this.loadWidgetSources().then(() => {
-            this.render();
-            this.initLogic();
-        });
+        this.render();
+        this.initLogic();
     }
+
     // Жизненный цикл: когда элемент удален (чистим память)
     disconnectedCallback() {
         if (this.state.observer) this.state.observer.disconnect();

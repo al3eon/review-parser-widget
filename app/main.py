@@ -103,12 +103,3 @@ def get_reviews_stats(db: Session = Depends(get_db)):
     for row in stats:
         result[row.source] = row.count
     return result
-
-
-@app.get('/api/widget-sources')
-def get_widget_sources():
-    """Только URL источников для виджета."""
-    return {
-        'vk': os.getenv('YA_TARGET'),
-        'yandex': os.getenv('YANDEX_WIDGET_URL')
-    }
