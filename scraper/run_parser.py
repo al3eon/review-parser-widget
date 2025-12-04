@@ -54,7 +54,7 @@ def run_backup():
 
 def run_parser_then_backup():
     """Парсинг → Бэкап."""
-    # run_all_parser()
+    run_all_parser()
     run_backup()
 
 
