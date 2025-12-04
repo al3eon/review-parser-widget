@@ -1,5 +1,4 @@
 import os
-
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -12,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from core.config import ALLOWED_ORIGINS, STATIC_DIR
 from core.scheduler import scheduler, start_scheduler
-from core.utils import log_and_alert_async
+from core.utils import log_and_alert_async, logger
 
 from .database import Base, SessionLocal, engine
 from .models import Review
@@ -23,9 +22,11 @@ Base.metadata.create_all(bind=engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info('Lifespan: запуск scheduler')
     start_scheduler()
     yield
-    scheduler.shutdown()
+    logger.info('Lifespan: остановка scheduler')
+    scheduler.shutdown(wait=False)
 
 app = FastAPI(title='Review Widget API')
 

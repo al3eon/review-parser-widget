@@ -1,9 +1,10 @@
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import pytz
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from core.utils import logger
 from scripts.backup_db import backup_process
 
-scheduler = AsyncIOScheduler()
+scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/Moscow'))
 
 
 def start_scheduler():
