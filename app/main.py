@@ -1,3 +1,5 @@
+import os
+
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -102,3 +104,22 @@ def get_reviews_stats(db: Session = Depends(get_db)):
     for row in stats:
         result[row.source] = row.count
     return result
+
+
+@app.get('/api/config/sources')
+def get_sources_config():
+    """Конфигурация источников отзывов (только URL меняются в .env)"""
+    return {
+        'vk': {
+            'url': os.getenv('VK_TARGET'),
+            'color': '#0077FF',
+            'iconPath': '/static/icons/vk.svg',
+            'displayName': 'ВКонтакте'
+        },
+        'yandex': {
+            'url': os.getenv('YA_TARGET'),
+            'color': '#FC3F1D',
+            'iconPath': '/static/icons/yandex.svg',
+            'displayName': 'Яндекс'
+        }
+    }

@@ -11,20 +11,7 @@ class ReviewWidget extends HTMLElement {
             DOTS_VISIBLE: 7,
             DOT_STEP: 20,
 
-            SOURCES: {
-                vk: {
-                    url: 'https://vk.com/reviews-120145172',
-                    color: '#0077FF',
-                    iconPath: '/static/icons/vk.svg',
-                    displayName: 'ВКонтакте'
-                },
-                yandex: {
-                    url: 'https://yandex.ru/maps/org/viantur/175874439005/reviews/',
-                    color: '#FC3F1D',
-                    iconPath: '/static/icons/yandex.svg',
-                    displayName: 'Яндекс'
-                }
-            }
+            SOURCES: {}
         };
 
         this.state = {
@@ -32,14 +19,39 @@ class ReviewWidget extends HTMLElement {
             isLoading: false,
             observer: null,
             stats: { total: 0, vk: 0, yandex: 0 },
-            currentSource: ''
+            currentSource: '',
+            sourcesLoaded: false
         };
     }
 
+    async fetchSources() {
+        const response = await fetch(`${this.CONFIG.BASE_URL}/api/config/sources`);
+        if (!response.ok) throw new Error('Sources config not available');
+        this.CONFIG.SOURCES = await response.json();
+        this.state.sourcesLoaded = true;
+    }
+
+    loadFallbackSources() {
+        // ← Локальный fallback на случай недоступности API
+        this.CONFIG.SOURCES = {
+            vk: { url: '#', color: '#0077FF', iconPath: '/static/icons/vk.svg', displayName: 'ВКонтакте' },
+            yandex: { url: '#', color: '#FC3F1D', iconPath: '/static/icons/yandex.svg', displayName: 'Яндекс' }
+        };
+        this.state.sourcesLoaded = true;
+    }
+
     // Жизненный цикл: когда элемент добавлен в DOM
-    connectedCallback() {
-        this.render();
-        this.initLogic();
+    async connectedCallback() {
+        try {
+            await this.fetchSources();  // ← НОВЫЙ метод
+            this.render();
+            this.initLogic();
+        } catch (error) {
+            console.error('Failed to load sources config:', error);
+            this.loadFallbackSources();
+            this.render();
+            this.initLogic();
+        }
     }
 
     // Жизненный цикл: когда элемент удален (чистим память)
@@ -235,6 +247,15 @@ class ReviewWidget extends HTMLElement {
     }
 
     render() {
+        if (!this.state.sourcesLoaded || Object.keys(this.CONFIG.SOURCES).length === 0) {
+            this.shadowRoot.innerHTML = `
+                ${this.getStyles()}
+                <div class="rl-wrapper">
+                    <div class="rl-stats-text">Загрузка конфигурации...</div>
+                </div>
+            `;
+            return;
+        }
         const icons = {};
         for (const key in this.CONFIG.SOURCES) {
             icons[key] = `<img src="${this.CONFIG.BASE_URL}${this.CONFIG.SOURCES[key].iconPath}" 
