@@ -381,11 +381,11 @@ docker compose -f docker-compose.production.yml up -d
 
 ```python
 if __name__ == '__main__':
-    run_all_parser()  # ← Раскомментируйте эту строку
+    run_parser_then_backup  # ← Раскомментируйте эту строку
     
     scheduler = BlockingScheduler()
     random_minute = get_random_minute()
-    scheduler.add_job(run_all_parser, 'cron', hour=3, minute=random_minute)
+    scheduler.add_job(run_parser_then_backup, 'cron', hour=3, minute=random_minute)
     logger.info(f'Планировщик парсера запущен. Жду 03:{random_minute}...')
     try:
         scheduler.start()

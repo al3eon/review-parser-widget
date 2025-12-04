@@ -65,7 +65,7 @@ def get_random_minute():
 
 if __name__ == '__main__':
     # Раскоментируйте, если нужно запустить сразу после деплоя на сервер
-    # run_all_parser()
+    # run_parser_then_backup
     scheduler = BlockingScheduler()
     random_minute = get_random_minute()
     scheduler.add_job(
