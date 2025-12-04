@@ -1,16 +1,15 @@
-import asyncio
 import datetime
 import os
 import sqlite3
 import zipfile
 
 from core.config import BACKUP_DIR, DB_PATH, TG_CHAT_ID
-from core.utils import bot, logger, send_telegram_file, send_telegram_message
+from core.utils import bot, log_and_alert_sync, logger, send_telegram_file
 
 os.makedirs(BACKUP_DIR, exist_ok=True)
 
 
-async def backup_process():
+def backup_process():
     """Создает hot-backup SQLite, сжимает и отправляет в ТГ."""
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     backup_file = os.path.join(BACKUP_DIR, f'backup_{timestamp}.db')
@@ -19,15 +18,16 @@ async def backup_process():
     logger.info(f'Запуск создания резервной копии: {DB_PATH} -> {backup_file}')
 
     try:
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(
-            None, _perform_sqlite_backup, DB_PATH, backup_file
-        )
+        src = sqlite3.connect(DB_PATH)
+        dst = sqlite3.connect(backup_file)
+        with dst:
+            src.backup(dst)
+        dst.close()
+        src.close()
+        logger.info('Бэкап БД создан успешно')
 
     except Exception as e:
-        err_msg = f'Ошибка при создании резервной копии: {e}'
-        logger.error(err_msg)
-        await send_telegram_message(err_msg)
+        log_and_alert_sync(e, 'Ошибка создания резервной копии')
         return
 
     try:
@@ -38,30 +38,23 @@ async def backup_process():
         logger.info(f'Резервная копия сжата: {zip_file}')
 
         if bot and TG_CHAT_ID:
-            await send_telegram_file(
-                zip_file, caption=f'Backup базы данных: {timestamp}'
-            )
+            try:
+                import asyncio
+                asyncio.create_task(
+                    send_telegram_file(
+                        zip_file, caption=f'Backup: {timestamp}'
+                    )
+                )
+                logger.info('Файл отправлен в телеграм.')
+            except Exception as e:
+                logger.warning(f'Ошибка отправки в ТГ: {e}')
         else:
-            logger.warning('Бот не подключен. '
-                           'Резервная копия сохранена, но не отправлена.')
+            logger.info('Бот не подключен или нет TG_CHAT_ID')
 
     except Exception as e:
-        logger.error(f'Ошибка сжатия/отправки сообщения: {e}')
+        log_and_alert_sync(e, 'Ошибка сжатия резервной копии')
 
     _cleanup_old_backups()
-
-
-def _perform_sqlite_backup(src_path, dst_path):
-    """Синхронная функция для выполнения backup()"""
-    if not os.path.exists(src_path):
-        raise FileNotFoundError(f'База данных не найдена: {src_path}')
-
-    src = sqlite3.connect(src_path)
-    dst = sqlite3.connect(dst_path)
-    with dst:
-        src.backup(dst)
-    dst.close()
-    src.close()
 
 
 def _cleanup_old_backups():
@@ -77,5 +70,8 @@ def _cleanup_old_backups():
             os.remove(old_file)
             logger.info(f'Удаление старых резервных копий: {old_file}')
         except OSError as e:
-            logger.error(f'Ошибка при удалении старых резервных копий: '
-                         f'{old_file}: {e}')
+            log_and_alert_sync(e, 'Ошибка при очистке старых бэкапов')
+
+
+if __name__ == '__main__':
+    backup_process()
