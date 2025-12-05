@@ -1,10 +1,13 @@
+import asyncio
 import datetime
 import os
 import sqlite3
 import zipfile
 
 from core.config import BACKUP_DIR, DB_PATH, TG_CHAT_ID
-from core.utils import bot, log_and_alert_sync, logger, send_telegram_file
+from core.utils import (
+    bot, close_bot, log_and_alert_sync, logger, send_telegram_file,
+)
 
 os.makedirs(BACKUP_DIR, exist_ok=True)
 
@@ -39,15 +42,17 @@ def backup_process():
 
         if bot and TG_CHAT_ID:
             try:
-                import asyncio
-                asyncio.create_task(
-                    send_telegram_file(
-                        zip_file, caption=f'Backup: {timestamp}'
-                    )
-                )
-                logger.info('Файл отправлен в телеграм.')
-            except Exception as e:
-                logger.warning(f'Ошибка отправки в ТГ: {e}')
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+
+            loop.run_until_complete(
+                send_telegram_file(zip_file, caption=f'Backup: {timestamp}')
+            )
+            loop.run_until_complete(close_bot())
+            loop.close()
+            logger.info('Файл отправлен в телеграм.')
         else:
             logger.info('Бот не подключен или нет TG_CHAT_ID')
 

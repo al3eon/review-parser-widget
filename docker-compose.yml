@@ -17,6 +17,7 @@ services:
   parser:
     build: .
     container_name: review_parser
+    command: python -m scraper.run_parser
     env_file:
       - .env
     volumes:

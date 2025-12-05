@@ -43,11 +43,8 @@ def run_backup():
     """Запуск резервирования БД."""
     logger.info('Запуск резервирования БД')
     try:
-        success = backup_process()
-        if success:
-            logger.info('Резервирование завершено успешно')
-        else:
-            log_and_alert_sync('Резервирование завершилось с ошибкой')
+        backup_process()
+        logger.info('Резервирование завершено успешно')
     except Exception as e:
         log_and_alert_sync(e, 'Ошибка резервирования БД')
 
@@ -65,8 +62,8 @@ def get_random_minute():
 
 if __name__ == '__main__':
     # Раскоментируйте, если нужно запустить сразу после деплоя на сервер
-    # run_parser_then_backup
-    scheduler = BlockingScheduler()
+    # run_parser_then_backup()
+    scheduler = BlockingScheduler(timezone='Europe/Moscow')
     random_minute = get_random_minute()
     scheduler.add_job(
         run_parser_then_backup, 'cron', hour=3, minute=random_minute

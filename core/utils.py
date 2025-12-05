@@ -49,18 +49,37 @@ async def send_telegram_file(file_path: str, caption: str = None):
         logger.error(f'Ошибка при отправке файла: {e}')
 
 
+async def close_bot():
+    """Закрывает telegram bot."""
+    global bot
+    if bot:
+        try:
+            if hasattr(bot, 'session') and bot.session:
+                await bot.session.close()
+        except Exception as e:
+            logger.warning(f'Ошибка при закрытии bot сессии: {e}')
+        finally:
+            bot = None
+
+
 def log_and_alert_sync(error, context=''):
     """Синхронная функция для логирования и отправки оповещений."""
     text = (f'Ошибка в {context}:\n{error}' if context else
             f'Ошибка:\n{error}')
 
     if isinstance(error, Exception):
-        logger.error(f"{context}: {error}", exc_info=True)
+        logger.error(f'{context}: {error}', exc_info=True)
     else:
-        logger.error(f"{context}: {error}")
+        logger.error(f'{context}: {error}')
 
     if bot and TG_CHAT_ID:
-        asyncio.create_task(send_telegram_message(text))
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        loop.run_until_complete(send_telegram_message(text))
 
 
 async def log_and_alert_async(error, context=''):
