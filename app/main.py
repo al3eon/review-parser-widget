@@ -104,12 +104,14 @@ def get_sources_config():
             'url': os.getenv('VK_TARGET'),
             'color': '#0077FF',
             'iconPath': '/static/icons/vk.svg',
-            'displayName': 'ВКонтакте'
+            'displayName': 'ВКонтакте',
+            'sourceName': 'VK'
         },
         'yandex': {
             'url': os.getenv('YA_TARGET'),
             'color': '#FC3F1D',
             'iconPath': '/static/icons/yandex.svg',
-            'displayName': 'Яндекс'
+            'displayName': 'Яндекс',
+            'sourceName': 'Яндекса'
         }
     }

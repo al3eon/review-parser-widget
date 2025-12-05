@@ -456,8 +456,8 @@ class ReviewWidget extends HTMLElement {
         const uniqueId = Math.random().toString(36).substr(2, 9);
 
         const sourceConfig = this.CONFIG.SOURCES[review.source] || {};
-        const sourceText = sourceConfig.displayName ?
-            `Отзыв из ${sourceConfig.displayName}` : 'Отзыв';
+        const sourceText = sourceConfig.sourceName ?
+            `Отзыв из ${sourceConfig.sourceName}` : 'Отзыв';
         const sourceLink = sourceConfig.url || '#';
         const sourceColor = sourceConfig.color || '#000';
 
