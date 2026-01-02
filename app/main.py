@@ -9,7 +9,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.config import ALLOWED_ORIGINS, STATIC_DIR
-from core.utils import log_and_alert_async
+from core.utils import log_and_alert
 
 from .database import Base, SessionLocal, engine
 from .models import Review
@@ -33,7 +33,7 @@ async def catch_exceptions_middleware(request: Request, call_next):
     try:
         return await call_next(request)
     except Exception as exc:
-        await log_and_alert_async(exc, f'Путь: {request.url.path}')
+        await log_and_alert(exc, f'Путь: {request.url.path}')
         return JSONResponse(
             status_code=500,
             content={'detail': 'Internal Server Error'}

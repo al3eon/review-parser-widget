@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from app.models import Review
 from core.config import YA_TARGET_URL
-from core.utils import log_and_alert_sync, logger
+from core.utils import log_and_alert, logger
 from scraper.base import BaseScraper
 from scraper.constants import (
     LOW_RATING, YA_AVATAR_LINK, YA_DATE_PUBLISH, YA_DIV_ALL_REVIEWS,
@@ -72,8 +72,8 @@ class YandexScraper(BaseScraper):
                 else:
                     consecutive_duplicates = 0
             except Exception as e:
-                log_and_alert_sync(e, f'{self.source_name} '
-                                      f'_count_consecutive_duplicates')
+                log_and_alert(e, f'{self.source_name} '
+                                 f'_count_consecutive_duplicates')
         return consecutive_duplicates
 
     def _load_all_review(self):
@@ -111,7 +111,7 @@ class YandexScraper(BaseScraper):
 
             return reviews_elements
         except Exception as e:
-            log_and_alert_sync(e, f'{self.source_name} _load_all_review')
+            log_and_alert(e, f'{self.source_name} _load_all_review')
 
     def _process_review(self, review_element):
         """Парсит карточку отзыва Яндекса."""
@@ -176,5 +176,5 @@ class YandexScraper(BaseScraper):
             return self.save_review(review_data)
 
         except Exception as e:
-            log_and_alert_sync(e, f'{self.source_name} _process_review')
+            log_and_alert(e, f'{self.source_name} _process_review')
             return 'skip'

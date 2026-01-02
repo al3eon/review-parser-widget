@@ -7,7 +7,7 @@ from selenium.common import NoSuchElementException
 
 from app.models import Review
 from core.config import VK_TARGET_URL
-from core.utils import log_and_alert_sync, logger
+from core.utils import log_and_alert, logger
 from scraper.base import BaseScraper
 from scraper.constants import (
     LOW_RATING, VK_AVATAR_LINK, VK_DATE_PUBLISH, VK_DIV_ALL_REVIEWS,
@@ -64,7 +64,7 @@ class VkScraper(BaseScraper):
                 time.sleep(10)
 
             except Exception as e:
-                log_and_alert_sync(e, f'{self.source_name} авторизация')
+                log_and_alert(e, f'{self.source_name} авторизация')
 
         logger.info(f'Открываем страницу: {VK_TARGET_URL}')
         self.driver.get(VK_TARGET_URL)
@@ -155,5 +155,5 @@ class VkScraper(BaseScraper):
             return self.save_review(review_data)
 
         except Exception as e:
-            log_and_alert_sync(e, f'{self.source_name} _process_review')
+            log_and_alert(e, f'{self.source_name} _process_review')
         return 'skip'
