@@ -1,8 +1,5 @@
-import asyncio
 import logging
-
-from aiogram import Bot
-from aiogram.types import FSInputFile
+import requests
 
 from core.config import (
     AVATARS_DIR, DATA_DIR, LOGS_DIR, TG_BOT_TOKEN, TG_CHAT_ID,
@@ -23,47 +20,40 @@ logging.basicConfig(
 
 logger = logging.getLogger('review_service')
 
-bot = Bot(token=TG_BOT_TOKEN) if TG_BOT_TOKEN else None
 
-
-async def send_telegram_message(text: str):
-    """Отправляет сообщение в Telegram."""
-    if not bot or not TG_CHAT_ID:
+def send_telegram_message(text: str):
+    """Отправляет сообщение в Telegram (синхронно)."""
+    if not TG_BOT_TOKEN or not TG_CHAT_ID:
         return
     try:
         msg = text[:4000] + '...' if len(text) > 4000 else text
-        await bot.send_message(chat_id=TG_CHAT_ID, text=msg)
+        requests.post(
+            f'https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage',
+            json={'chat_id': TG_CHAT_ID, 'text': msg},
+            timeout=10
+        )
     except Exception as e:
         logger.error(f'Ошибка при отправке сообщения: {e}')
 
 
-async def send_telegram_file(file_path: str, caption: str = None):
-    """Отправляет файл в Telegram."""
-    if not bot or not TG_CHAT_ID:
+def send_telegram_file(file_path: str, caption: str = None):
+    """Отправляет файл в Telegram (синхронно)."""
+    if not TG_BOT_TOKEN or not TG_CHAT_ID:
         return
     try:
-        doc = FSInputFile(path=file_path)
-        await bot.send_document(chat_id=TG_CHAT_ID,
-                                document=doc, caption=caption)
+        with open(file_path, 'rb') as f:
+            requests.post(
+                f'https://api.telegram.org/bot{TG_BOT_TOKEN}/sendDocument',
+                data={'chat_id': TG_CHAT_ID, 'caption': caption or ''},
+                files={'document': f},
+                timeout=10
+            )
     except Exception as e:
         logger.error(f'Ошибка при отправке файла: {e}')
 
 
-async def close_bot():
-    """Закрывает telegram bot."""
-    global bot
-    if bot:
-        try:
-            if hasattr(bot, 'session') and bot.session:
-                await bot.session.close()
-        except Exception as e:
-            logger.warning(f'Ошибка при закрытии bot сессии: {e}')
-        finally:
-            bot = None
-
-
-def log_and_alert_sync(error, context=''):
-    """Синхронная функция для логирования и отправки оповещений."""
+def log_and_alert(error, context=''):
+    """Логирование и отправка оповещений (синхронно)."""
     text = (f'Ошибка в {context}:\n{error}' if context else
             f'Ошибка:\n{error}')
 
@@ -72,25 +62,4 @@ def log_and_alert_sync(error, context=''):
     else:
         logger.error(f'{context}: {error}')
 
-    if bot and TG_CHAT_ID:
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        loop.run_until_complete(send_telegram_message(text))
-
-
-async def log_and_alert_async(error, context=''):
-    """Асинхронная функция для логирования и отправки оповещений."""
-    text = (f'Ошибка в {context}:\n{error}' if context else
-            f'Ошибка:\n{error}')
-
-    if isinstance(error, Exception):
-        logger.error(f"{context}: {error}", exc_info=True)
-    else:
-        logger.error(f"{context}: {error}")
-
-    if bot and TG_CHAT_ID:
-        asyncio.create_task(send_telegram_message(text))
+    send_telegram_message(text)

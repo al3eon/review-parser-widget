@@ -1,13 +1,10 @@
-import asyncio
 import datetime
 import os
 import sqlite3
 import zipfile
 
-from core.config import BACKUP_DIR, DB_PATH, TG_CHAT_ID
-from core.utils import (
-    bot, close_bot, log_and_alert_sync, logger, send_telegram_file,
-)
+from core.config import BACKUP_DIR, DB_PATH, TG_CHAT_ID, TG_BOT_TOKEN
+from core.utils import log_and_alert, logger, send_telegram_file
 
 os.makedirs(BACKUP_DIR, exist_ok=True)
 
@@ -30,7 +27,7 @@ def backup_process():
         logger.info('Бэкап БД создан успешно')
 
     except Exception as e:
-        log_and_alert_sync(e, 'Ошибка создания резервной копии')
+        log_and_alert(e, 'Ошибка создания резервной копии')
         return
 
     try:
@@ -40,24 +37,14 @@ def backup_process():
         os.remove(backup_file)
         logger.info(f'Резервная копия сжата: {zip_file}')
 
-        if bot and TG_CHAT_ID:
-            try:
-                loop = asyncio.get_event_loop()
-            except RuntimeError:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-
-            loop.run_until_complete(
-                send_telegram_file(zip_file, caption=f'Backup: {timestamp}')
-            )
-            loop.run_until_complete(close_bot())
-            loop.close()
+        if TG_BOT_TOKEN and TG_CHAT_ID:
+            send_telegram_file(zip_file, caption=f'Backup: {timestamp}')
             logger.info('Файл отправлен в телеграм.')
         else:
             logger.info('Бот не подключен или нет TG_CHAT_ID')
 
     except Exception as e:
-        log_and_alert_sync(e, 'Ошибка сжатия резервной копии')
+        log_and_alert(e, 'Ошибка сжатия резервной копии')
 
     _cleanup_old_backups()
 
@@ -75,7 +62,7 @@ def _cleanup_old_backups():
             os.remove(old_file)
             logger.info(f'Удаление старых резервных копий: {old_file}')
         except OSError as e:
-            log_and_alert_sync(e, 'Ошибка при очистке старых бэкапов')
+            log_and_alert(e, 'Ошибка при очистке старых бэкапов')
 
 
 if __name__ == '__main__':

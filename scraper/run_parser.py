@@ -3,7 +3,7 @@ from random import randint
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from app.database import Base, SessionLocal, engine
-from core.utils import log_and_alert_sync, logger
+from core.utils import log_and_alert, logger
 from scraper.constants import MAX_MINUTE, MIN_MINUTE
 from scraper.vk import VkScraper
 from scraper.yandex import YandexScraper
@@ -29,10 +29,10 @@ def run_all_parser():
                 scraper.run()
                 logger.info(f'Модуль {source} успешно завершил работу')
             except Exception as e:
-                log_and_alert_sync(e, 'run_all_parser')
+                log_and_alert(e, f'Ошибка в {source}')
 
     except Exception as global_e:
-        log_and_alert_sync(global_e, 'Критическая ошибка парсинга')
+        log_and_alert(global_e, 'Критическая ошибка парсинга')
 
     finally:
         db.close()
@@ -46,7 +46,7 @@ def run_backup():
         backup_process()
         logger.info('Резервирование завершено успешно')
     except Exception as e:
-        log_and_alert_sync(e, 'Ошибка резервирования БД')
+        log_and_alert(e, 'Ошибка резервирования БД')
 
 
 def run_parser_then_backup():
@@ -61,8 +61,6 @@ def get_random_minute():
 
 
 if __name__ == '__main__':
-    # Раскоментируйте, если нужно запустить сразу после деплоя на сервер
-    # run_parser_then_backup()
     scheduler = BlockingScheduler(timezone='Europe/Moscow')
     random_minute = get_random_minute()
     scheduler.add_job(

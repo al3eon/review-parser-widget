@@ -27,7 +27,6 @@ Review Parser & Widget — это полнофункциональное реш�
 - SQLite — легковесная база данных
 - Selenium — веб-скрейпинг
 - APScheduler — планировщик задач
-- aiogram — бот Telegram для уведомлений
 
 ### Frontend
 - JavaScript ES6+ — Web Components (custom elements)
